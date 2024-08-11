@@ -8,7 +8,7 @@ const fetchuser =  require("../middleware/fetchuser");
 const router = express.Router();
 const JWT_SECRET = "Bhai_Tera_Gunda";
 
-// create a user, POST : '/api/auth/createuser'. No login required
+// ROUTE 1 : Create a user, POST : '/api/auth/createuser'. No login required
 router.post(
     // endpoint
     "/createuser", 
@@ -60,7 +60,7 @@ router.post(
 });
 
 
-// Logs a user in, POST : '/api/auth/login'. No login required
+// ROUTE 2 :  Logs a user in, POST : '/api/auth/login'. No login required
 router.post(
     // endpoint
     "/login", 
@@ -107,16 +107,8 @@ router.post(
     }
 );
 
-// Gets user information of logged in user. GET : "api/auth/getuser"
+// ROUTE 3 : Gets user information of logged in user. GET : "api/auth/getuser"
 router.get( "/getuser", fetchuser, async (req, res) => {
-    
-    // If there are any validation errors in email and password, send 400 and errors
-    
-    const errors = validationResult(req);
-    if(!errors.isEmpty()){
-        return res.status(400).json({errors : errors.array()});
-    }
-
     try {
         // get user by id
         const userId = req.user.id
