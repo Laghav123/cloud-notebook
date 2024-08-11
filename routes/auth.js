@@ -3,9 +3,10 @@ const User = require('../models/User');
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require('express-validator');
 const bcrypt = require("bcryptjs");
+const fetchuser =  require("../middleware/fetchuser");
 
 const router = express.Router();
-const JWT_SECRET = "Bhai_Tera_Gunda"
+const JWT_SECRET = "Bhai_Tera_Gunda";
 
 // create a user, POST : '/api/auth/createuser'. No login required
 router.post(
@@ -61,7 +62,8 @@ router.post(
 
 // Logs a user in, POST : '/api/auth/login'. No login required
 router.post(
-    "/login",
+    // endpoint
+    "/login", 
 
     // validations 
     [
@@ -95,7 +97,8 @@ router.post(
                 }
             }
             const authToken = jwt.sign(data, JWT_SECRET);
-            res.json(authToken);
+            res.json({authToken}); 
+            // in frontend we will store authToken and will send it in header for various other srequests
         }
         catch (error) {
             res.status(500).send("Internal Server Error");
@@ -103,5 +106,32 @@ router.post(
 
     }
 );
+
+// Gets user information of logged in user. GET : "api/auth/getuser"
+router.get( "/getuser", fetchuser, async (req, res) => {
+    
+    // If there are any validation errors in email and password, send 400 and errors
+    
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json({errors : errors.array()});
+    }
+
+    try {
+        // get user by id
+        const userId = req.user.id
+        let user = await User.findById(userId).select("-password");
+
+        if(!user){
+            res.status(400).json({error: "Please try to log in with correct credentials."});
+        }
+
+        res.send(user);
+    }
+    catch (error) {
+        res.status(500).send("Internal Server Error");
+    }
+
+});
 
 module.exports = router;
