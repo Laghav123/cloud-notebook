@@ -36,8 +36,11 @@ router.post(
             res.status(400).json({error: "A user with this email already exists. Please login.."})
         }
 
-        const salt = await bcrypt.genSalt(10); // generates a salt of length 10
-        const secPass = await bcrypt.hash( req.body.password, salt );
+        // generates a salt for hashing the password
+        const salt = await bcrypt.genSalt(10); 
+        
+        // Synchronous Sign with default (HMAC SHA256)
+        const secPass = await bcrypt.hash( req.body.password, salt ); 
 
         user = await User({
             name : req.body.name,
@@ -107,7 +110,7 @@ router.post(
     }
 );
 
-// ROUTE 3 : Gets user information of logged in user. GET : "api/auth/getuser"
+// ROUTE 3 : Gets user information of logged in user. GET : "api/auth/getuser". login required
 router.get( "/getuser", fetchuser, async (req, res) => {
     try {
         // get user by id

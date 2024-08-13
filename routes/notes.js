@@ -40,7 +40,7 @@ router.post( "/addnote",
                 title, description, tag, user : req.user.id
             });
             const savedNote = await note.save();
-            res.send(savedNote)
+            res.send(savedNote);
         }
         catch (error) {
             res.status(500).send({error : "Internal Server Error (notes)", stackTrace : error});
